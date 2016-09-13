@@ -1,0 +1,73 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net;
+using System.IO;
+using System.Threading;
+
+
+namespace ConsoleApplication49
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            while (true)
+            {
+                A();
+                Thread.Sleep(TimeSpan.FromMinutes(1));
+            }
+            Console.ReadKey();
+        }
+        static void A()
+        {
+            WebRequest zapros = WebRequest.Create("http://api.lod-misis.ru/testassignment");
+            WebResponse otvet = zapros.GetResponse();
+            Stream dataStream = otvet.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            Console.WriteLine(responseFromServer);
+            B(responseFromServer);
+            reader.Close();
+            otvet.Close();
+        }
+        static void B(string MaleFemale)
+        {
+            int MDied = 0;
+            int MBorn = 0;
+            int FDied = 0;
+            int FBorn = 0;
+            string gg1 = MaleFemale.Trim('"');
+            string[] gg = gg1.Split(';');
+            for (int i = 0; i < gg.Length; i++)
+            {
+                if (gg[i] == "Male:Born")
+                {
+                    MBorn++;
+                }
+                if (gg[i] == "Male:Died")
+                {
+                    MDied++;     
+                }
+                if(gg[i]=="Female:Died")
+                {
+                    FDied++;
+                }
+                if(gg[i]=="Female:Born")
+                {
+                    FBorn++;  
+                }
+            }
+            if (MBorn != 0)
+                Console.Write("Увеличение количества мужчин-{0} человек:", MBorn);
+            if (MDied != 0)
+                Console.Write("Уменьшение количества мужчин-{0} человек:", MDied);
+            if (FDied != 0)
+                Console.Write("Уменьшение количества женщин-{0} человек:", FDied);
+            if (FBorn != 0)
+                Console.Write("Увеличение количества женщин-{0} человек:", FBorn);
+            Console.WriteLine();
+        }
+    }
+}
